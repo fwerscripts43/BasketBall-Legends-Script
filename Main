@@ -1,0 +1,35 @@
+import time
+import random
+from pynput import keyboard
+
+kb = keyboard.Controller()
+running = False  # Toggle state
+
+def on_press(key):
+    global running
+    try:
+        if key.char == 'f':
+            running = not running  # Switch state
+            print("E toggle is now", "ON" if running else "OFF")
+    except AttributeError:
+        pass
+
+def hold_e_loop():
+    global running
+    while True:
+        if running:
+            hold_time = random.uniform(0.6, 0.8)
+            kb.press('e')
+            time.sleep(hold_time)
+            kb.release('e')
+            time.sleep(0.1)  # Small delay to prevent spamming
+        else:
+            time.sleep(0.1)  # Sleep while paused
+
+# Start keyboard listener in a separate thread
+from threading import Thread
+listener = keyboard.Listener(on_press=on_press)
+listener.start()
+
+# Run the loop
+hold_e_loop()
